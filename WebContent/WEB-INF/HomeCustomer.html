@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <link href="../css/mystyle.css" rel="stylesheet">
+  <link href="css/mystyle.css" rel="stylesheet">
+  <title>Quotations: Customer</title>
+</head>
+<body>
+	<!-- ******************************** NAVBAR ****************************************** -->
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  		<span class="navbar-brand"><b>Price Quotation</b></span>
+	
+	  	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		    <ul class="navbar-nav mr-auto">
+		      	<li class="nav-item active">
+		        	<a class="nav-link" href="/HomeCustomer" th:href="@{/HomeCustomer}">Home <span class="sr-only">(current)</span></a>
+		      	</li>
+		      	<li class="nav-item">
+		        	<a class="nav-link" href="/LogOut" th:href="@{/LogOut}">LogOut</a>
+		      	</li>
+		    </ul>
+	  </div>
+	</nav>
+	<!-- ******************************** /NAVBAR ****************************************** -->
+	
+	
+	<div class="container-fluid">
+		<h1> Home Customer </h1>
+		
+		<div class="row">
+			<div class="col-6">
+				<h3> Here there are the price quotations you already asked for: </h3>
+				<div class="col-sm jnk-col">
+				
+					<table class="table table-bordered table-hover mt-5">
+						<thead>
+							<tr class="text-center">
+								<th>Product</th>
+								<th>Code</th>
+								<th>Options</th>
+								<th>Price</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="q : ${quotations}" class="text-center">
+								<td th:text="${q.product.name}"> NoProducts </td>
+								<td th:text="${q.product.productCode}"> -1 </td>
+								<td>
+								  <span th:each="o : ${q.options}"> 
+									<span th:text="${o.name},">NoOptions</span>  
+								  </span>
+								</td>
+								<td th:text="${q.price} + $"> 0.00€ </td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			
+			<div class="col-6">
+				<h3> Ask for a new price quotation: </h3>
+				
+				<form action="HomeCustomer" method="POST" class="form-group m-3">
+					<div th:if="${product} == null">
+					    <h5>Product: </h5>
+					    <select name="role" class="form-control">
+							<option value="product" th:each="product : ${products}" th:text="${product.productCode + ' | ' + product.name}"> No product available </option>
+						</select>
+					</div>
+					<div th:unless="${product} == null">
+						<h5> You chose </h5>
+							Product : <span  th:text="${product .name}: "> product </span>
+							<img src="../images/default.jpg" th:src="@{/GetImage(image=${product.id})}" class="rounded img-thumbnail mx-2" alt="product+image">
+						<h5>Choose the put options you're interested in: </h5>
+						<div th:each="option : ${options}">
+							<span th:text="${option.name}: "> No options to show: </span>
+							<input type="checkbox" name="${option.id}" value="${option.id}"> <br>
+						</div>
+					</div> 
+					<input class="mt-3" type="submit" value="Add">
+				</form>
+				
+			</div>
+			
+		</div>
+		
+	</div>
+</body>
+</html>
