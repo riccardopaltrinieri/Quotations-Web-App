@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import beans.Option;
 import beans.Product;
 import beans.Quotation;
 import beans.User;
@@ -42,14 +43,43 @@ public class QuotationDAO {
 						int productCode = result.getInt("p.code");
 						String productName = result.getString("p.name");
 						Product product = new Product(idProduct, productCode, productName);
-						Quotation qtn = new Quotation(idQuotation, product, price);
+						product.setOptions(opt.getQuotationOptions(idQuotation, idProduct));
 						
-						qtn.setOption(opt.getOptions(idProduct));
-						
-						quotations.add(qtn);
+						quotations.add(new Quotation(idQuotation, product, price));
 					}
 					return quotations;
 				}
+		}
+	}
+
+	public void addQuotation(User user, int idProduct, List<Option> optionsChecked) throws SQLException {
+
+		String query = "INSERT INTO price_quotations_db.quotations (id_product, id_customer) VALUES (?, ?);";
+		int idQuotation;
+		
+		try (PreparedStatement pstatement = connection.prepareStatement(query, 1);) {
+
+			pstatement.setInt(1, idProduct);
+			pstatement.setInt(2, user.getId());
+			pstatement.executeUpdate();
+			
+			try (ResultSet result = pstatement.getGeneratedKeys()) {
+				if(result.next()) idQuotation = result.getInt(1);
+				else throw new SQLException("Generated key for price quotation not returned");
+			}
+			
+		}
+		
+		query = "INSERT INTO price_quotations_db.requested_options (id_product, id_option, id_quotation) VALUES (?, ?, ?);";
+		
+		for (Option option : optionsChecked) {
+			try (PreparedStatement pstatement = connection.prepareStatement(query);) {
+	
+				pstatement.setInt(1, idProduct);
+				pstatement.setInt(2, option.getId());
+				pstatement.setInt(3, idQuotation);
+				pstatement.executeUpdate();
+			}
 		}
 	}
 }

@@ -18,12 +18,41 @@ public class OptionDAO {
 	}
 	
 	
-	public List<Option> getOptions(int idProduct) throws SQLException {
+	public List<Option> getQuotationOptions(int idQuotation, int idProduct) throws SQLException {
 		
 		List<Option> options = new ArrayList<>();
 		
-		String query = "SELECT o.id, o.optionCode, o.name, o.type"
-					 + "FROM price_quotations_db.options as o JOIN price_quotations_db.ppo as ppo "
+		String query = "SELECT o.id, o.optionCode, o.name, o.type "
+					 + "FROM price_quotations_db.options as o JOIN price_quotations_db.requested_options as ppo "
+					 + "ON ppo.id_option = o.id "
+					 + "WHERE ppo.id_product = ? AND ppo.id_quotation = ?";
+		
+		try (PreparedStatement pstatement = connection.prepareStatement(query); ) {
+				
+				pstatement.setInt(1, idProduct);
+				pstatement.setInt(2, idQuotation);
+				pstatement.execute();
+	
+				try (ResultSet result = pstatement.executeQuery();) {
+					while(result.next()) {
+						int id = result.getInt("o.id");
+						int optionCode = result.getInt("o.optionCode");
+						String name = result.getString("o.name");
+						String type = result.getString("o.type");
+						Option opt = new Option(id, optionCode, type, name);
+						options.add(opt);
+					}
+					return options;
+				}
+		}
+	}
+
+
+	public List<Option> getOptions(int idProduct) throws SQLException {		
+		List<Option> options = new ArrayList<>();
+	
+		String query = "SELECT o.id, o.optionCode, o.name, o.type "
+					 + "FROM price_quotations_db.options as o JOIN price_quotations_db.product_options as ppo "
 					 + "ON ppo.id_option = o.id "
 					 + "WHERE ppo.id_product = ?";
 		

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -19,9 +20,11 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import beans.Option;
 import beans.Product;
 import beans.Quotation;
 import beans.User;
+import dao.OptionDAO;
 import dao.ProductDAO;
 import dao.QuotationDAO;
 
@@ -91,8 +94,47 @@ public class HomeCustomer extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		//TODO GESTIONE DEL FORM
-
+		QuotationDAO qtn = new QuotationDAO(connection);
+		OptionDAO opt = new OptionDAO(connection);
+		User user = (User) request.getSession().getAttribute("user");
+		String product = request.getParameter("product");
+		List<Option> options;
+		int idProduct;
+		
+		if (product != null) {
+			
+			idProduct = Integer.valueOf(product);
+			request.getSession().setAttribute("product", idProduct);
+			try {
+				options = opt.getOptions(idProduct);
+				request.setAttribute("options", options);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			doGet(request, response);
+			
+		} else {
+			
+			idProduct = (int) request.getSession().getAttribute("product");
+			
+			try {
+				options = opt.getOptions(idProduct);
+				List<Option> optionsChecked = new ArrayList<>();
+				
+				for (Option o : options) {
+					String optionParameter = request.getParameter(String.valueOf(o.getOptionCode()));
+					if(optionParameter != null) optionsChecked.add(o);
+				}
+				
+				qtn.addQuotation(user, idProduct, optionsChecked);
+				request.getSession().setAttribute("product", null);
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
+			response.sendRedirect(request.getContextPath() + "/HomeCustomer");
+		}
 	}
 
 

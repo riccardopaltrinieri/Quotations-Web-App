@@ -1,13 +1,10 @@
 package beans;
 
-import java.util.List;
-
 public class Quotation {
 
 	private int idCustomer;
 	private int idEmployee;
 	private Product product;
-	private List<Option> option;
 	private float price;
 	
 	public Quotation(int idCustomer, int idEmployee, Product product) {
@@ -45,11 +42,5 @@ public class Quotation {
 	}
 	public void setPrice(float price) {
 		this.price = price;
-	}
-	public List<Option> getOption() {
-		return option;
-	}
-	public void setOption(List<Option> option) {
-		this.option = option;
 	}
 }
