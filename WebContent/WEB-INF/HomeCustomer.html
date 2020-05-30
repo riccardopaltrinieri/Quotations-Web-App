@@ -8,7 +8,7 @@
 </head>
 <body>
 	<!-- ******************************** NAVBAR ****************************************** -->
-	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+	<nav class="navbar navbar-expand-lg navbar-dark bg-info">
   		<span class="navbar-brand"><b>Price Quotation</b></span>
 	
 	  	<div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -25,12 +25,13 @@
 	<!-- ******************************** /NAVBAR ****************************************** -->
 	
 	
-	<div class="container-fluid">
-		<h1> Home Customer </h1>
+	<div class="container-fluid mt-4">
+	
+		<h1> Home Customer </h1> <br>
 		
 		<div class="row">
 			<div class="col-6">
-				<h3> Here there are the price quotations you already asked for: </h3>
+				<h3 class="text-center"> Here there are the price quotations you already asked for: </h3>
 				<div class="col-sm jnk-col">
 				
 					<table class="table table-bordered table-hover mt-5">
@@ -39,6 +40,7 @@
 								<th>Product</th>
 								<th>Code</th>
 								<th>Options</th>
+								<th>Employee</th>
 								<th>Price</th>
 							</tr>
 						</thead>
@@ -51,6 +53,7 @@
 									<span th:text="${o.name} + ', '">NoOptions</span>  
 								  </span>
 								</td>
+								<td th:text="${q.employee}" class="align-middle"> None </td>
 								<td th:text="${q.price} + '$'"> 0.00€ </td>
 							</tr>
 						</tbody>

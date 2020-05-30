@@ -23,9 +23,9 @@ public class OptionDAO {
 		List<Option> options = new ArrayList<>();
 		
 		String query = "SELECT o.id, o.optionCode, o.name, o.type "
-					 + "FROM price_quotations_db.options as o JOIN price_quotations_db.requested_options as ppo "
-					 + "ON ppo.id_option = o.id "
-					 + "WHERE ppo.id_product = ? AND ppo.id_quotation = ?";
+					 + "FROM price_quotations_db.options as o JOIN price_quotations_db.requested_options as ro "
+					 + "ON ro.id_option = o.id "
+					 + "WHERE ro.id_product = ? AND ro.id_quotation = ?";
 		
 		try (PreparedStatement pstatement = connection.prepareStatement(query); ) {
 				
@@ -52,9 +52,9 @@ public class OptionDAO {
 		List<Option> options = new ArrayList<>();
 	
 		String query = "SELECT o.id, o.optionCode, o.name, o.type "
-					 + "FROM price_quotations_db.options as o JOIN price_quotations_db.product_options as ppo "
-					 + "ON ppo.id_option = o.id "
-					 + "WHERE ppo.id_product = ?";
+					 + "FROM price_quotations_db.options as o JOIN price_quotations_db.product_options as ro "
+					 + "ON ro.id_option = o.id "
+					 + "WHERE ro.id_product = ?";
 		
 		try (PreparedStatement pstatement = connection.prepareStatement(query); ) {
 				
@@ -74,4 +74,5 @@ public class OptionDAO {
 				}
 		}
 	}
+
 }

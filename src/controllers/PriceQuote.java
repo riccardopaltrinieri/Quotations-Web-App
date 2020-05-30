@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -24,10 +23,10 @@ import beans.User;
 import dao.QuotationDAO;
 
 /**
- * Servlet implementation class HomeEmplyee
+ * Servlet implementation class PriceQuote
  */
-@WebServlet("/HomeEmployee")
-public class HomeEmployee extends HttpServlet {
+@WebServlet("/PriceQuote")
+public class PriceQuote extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     private Connection connection = null;
     
@@ -63,33 +62,45 @@ public class HomeEmployee extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		User user = (User) request.getSession().getAttribute("user");
 		QuotationDAO qtn = new QuotationDAO(connection);
-
-		List<Quotation> quotations;
-		List<Quotation> pricelessQuotations;
 		
 		try {
-			quotations = qtn.getEmployeeQuotations(user);
-			pricelessQuotations = qtn.getPricelessQuotations();
+			int idQuotation = Integer.valueOf(request.getParameter("quotation"));
+			Quotation quotation = qtn.getQuotation(idQuotation);
 			
-			request.setAttribute("quotations", quotations);
-			request.setAttribute("pricelessQuotations", pricelessQuotations);
-		} catch (SQLException e) {
+			request.getSession().setAttribute("idQuotation", idQuotation);
+			request.setAttribute("quotation", quotation);
+		} catch (SQLException | NumberFormatException e) {
 			e.printStackTrace();
 		}
 		
-		String path = "/WEB-INF/HomeEmployee.html";
+		String path = "/WEB-INF/PriceQuote.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 
-
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-
-		doGet(request, response);
+		User user = (User) request.getSession().getAttribute("user");
+		QuotationDAO qtn = new QuotationDAO(connection);
+		int idQuotation = (int) request.getSession().getAttribute("idQuotation");
+		
+		try {
+			Float price = Float.valueOf(request.getParameter("price"));
+			if (price > 0) qtn.priceQuotation(user, idQuotation, price);
+			else {
+				request.setAttribute("notvalid", "true");
+				request.setAttribute("quotation", qtn.getQuotation(idQuotation));
+				String path = "/WEB-INF/PriceQuote.html";
+				ServletContext servletContext = getServletContext();
+				final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+				templateEngine.process(path, ctx, response.getWriter());
+			}
+		} catch (SQLException | NumberFormatException e) {
+			e.printStackTrace();
+		}
+		response.sendRedirect(request.getContextPath() + "/HomeEmployee");
 	}
 
 
