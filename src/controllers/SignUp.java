@@ -71,7 +71,13 @@ public class SignUp extends HttpServlet {
 
 		String username = request.getParameter("username");
 		String password = request.getParameter("pwd");
+		String confirmPassword = request.getParameter("conf-pwd");
 		String role = request.getParameter("role");
+		
+		if(!password.equals(confirmPassword)) {
+			request.setAttribute("pwdnotvalid", "true");
+			doGet(request,response);
+		}
 		
 		try {
 			// The new user is stored in the database and all the info saved

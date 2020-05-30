@@ -5,36 +5,69 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
   <link href="../css/mystyle.css" rel="stylesheet">
-  <link href="css/mystyle.css" rel="stylesheet">
+  <link th:href="css/mystyle.css" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <title>Quotations: SignUp</title>
 </head>
 <body class="text-center">
 		
-	<div class="container-lg">
-	
-		<h1 class="m-3 text-center">Sign Up to work with us</h1>
 			
-		<div class="row align-item-center justify-content-center">
-			<form action='SignUp' method="POST" class="form-group jnk-col">
+	<div class="row align-item-center justify-content-center">
+		<div class="col col-sm-4">
+			<h1 class="m-3 text-center">Sign Up to work with us</h1>
+			<form action="SignUp.html" th:action='SignUp' method="POST" class="form-group jnk-col">
 				
 				<div th:if="${notvalid == 'true'}" class="alert-danger mt-5 mx-3">
 					<p> "Username already used" </p>
 				</div>
+				<div th:if="${pwdnotvalid == 'true'}" class="alert-danger mt-5 mx-3">
+					<p> "Password not valid" </p>
+				</div>
 			
 			    <label class="col-form-label">Username: </label>
-	        	<input type="text" name="username"  pattern="[a-zA-Z0-9-_\.]{1,20}$" placeholder="ex.ample_99" class="form-control" required>
+			    <div class="row align-item-center justify-content-center">
+	        		<input type="text" name="username"  pattern="[a-zA-Z0-9-_\.]{1,20}$" placeholder="ex.ample_99" class="form-control text-center col-9" required>
+				</div>
 	        	<small class="form-text text-muted mb-2">only letters, numbers '_'(underscore) and '.'(dot) are accepted</small>
+			    
 			    <label class="col-form-label">Password: </label>
-				<input type = "password" name="pwd" class="form-control" placeholder="**********" required>
+			    <div class="row align-item-center justify-content-center">
+					<input type ="password" id="password" name="pwd" class="form-control text-center col-9" placeholder="**********" required>
+				</div>
+			    
+			    <label class="col-form-label">Confirm password: </label>
+			    <div class="row align-item-center justify-content-center">
+					<input type ="password" id="confirm-password" name="conf-pwd" class="form-control text-center col-9" placeholder="**********" required>
+				</div>
+			    
 			    <label class="col-form-label">Role: </label>
-				<select name="role" class="form-control">
-					<option value="customer" > Customer </option>
-					<option value="employee"> Employee </option>
-				</select>
-				<input type="submit" class="btn btn-block btn-info mt-5" value="Sign Up">
+			    <div class="row align-item-center justify-content-center">
+					<select name="role" class="form-control col-3">
+						<option value="customer"> Customer </option>
+						<option value="employee"> Employee </option>
+					</select>
+				</div>
+			    <div class="row align-item-center justify-content-center">
+					<input type="submit" class="btn btn-block btn-info mt-5 col-3" value="Sign Up">
+				</div>
 			</form>
 		</div>
 	</div>
-
+	<script>
+		var password = document.getElementById("password");
+		var confirmPassword = document.getElementById("confirm-password");
+		
+		$("#confirm-password").on('keyup', function() {
+			if(password.value != confirmPassword.value) {
+				confirmPassword.setCustomValidity("Password doesn't match");
+				confirmPassword.style.borderColor = "red";
+				confirmPassword.reportValidity();
+			} else {
+				confirmPassword.setCustomValidity("");
+				confirmPassword.style.borderColor = "green";
+			}
+		})
+		
+	</script>
 </body>
 </html>
