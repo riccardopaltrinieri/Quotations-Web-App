@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <link href="../css/mystyle.css" th:href="css/mystyle.css" rel="stylesheet">
+  <link id="contextPathHolder" data-contextPath="" th:data-contextPath="${pageContext.request.contextPath}"/>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="../js/HomeCustomer.js" th:src="js/HomeCustomer.js"></script>
+  <title>Quotations: Customer</title>
+</head>
+<body>
+	<!-- ******************************** NAVBAR ****************************************** -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-info">
+  		<span class="navbar-brand"><b>Price Quotation</b></span>
+
+	  	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		    <ul class="navbar-nav mr-auto">
+		      	<li class="nav-item active">
+		        	<a class="nav-link" href="/HomeCustomer" th:href="@{/HomeCustomer}">Home <span class="sr-only">(current)</span></a>
+		      	</li>
+		      	<li class="nav-item">
+		        	<a class="nav-link" href="/LogOut" th:href="@{/LogOut}">LogOut</a>
+		      	</li>
+		    </ul>
+	  </div>
+	</nav>
+	<!-- ******************************** /NAVBAR ****************************************** -->
+
+
+	<div class="container-fluid mt-4">
+
+		<h1> Home Customer </h1> <br>
+
+		<div class="row">
+			<div class="col-6">
+				<h3 class="text-center"> Here there are the price quotations you already asked for: </h3>
+				<div class="col-sm jnk-col">
+
+					<table id="tableQuotations" class="table table-bordered table-hover mt-5">
+					</table>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+</body>
+</html>
