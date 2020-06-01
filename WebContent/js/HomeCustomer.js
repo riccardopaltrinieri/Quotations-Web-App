@@ -1,11 +1,8 @@
 window.onload = main;
-var CONTEXT_PATH = $('#contextPathHolder').attr('data-contextPath');
-var hostPath = window.location.protocol + "//" + window.location.host;
-var table = $("#tableQuotations");
 var request;
 
 function main () {
-  asynchReq(CONTEXT_PATH+"/GetQuotations", loadQuotations);
+  asynchReq("GetQuotations", loadQuotations);
 }
 
 function asynchReq(url, cfunc) {
@@ -18,20 +15,19 @@ function asynchReq(url, cfunc) {
 function loadQuotations() {
   if (request.readyState == 4 && request.status == 200) {
     var quotations = JSON.parse(request.responseText);
-    var table, row, col = [];
+    var table = document.getElementById("tableQuotations");
+    var row, col = [];
 
     // Extract columns name for the header
-    for (var i = 0; i < quotations.length; i++) {
-      for (var key in quotations[i]) {
-        if (col.indexOf(key) === -1) {
-          col.push(key);
-        }
+    for (var key in quotations[0]) {
+      if (col.indexOf(key) === -1) {
+        col.push(key);
       }
     }
 
     // Create the table header using the keys extracted
     row = table.insertRow(-1);
-    for (var i = 0; i < quotations.length; i++) {
+    for (var i = 0; i < col.length; i++) {
       var header = document.createElement("th");
       header.innerHTML = col[i];
       row.appendChild(header);

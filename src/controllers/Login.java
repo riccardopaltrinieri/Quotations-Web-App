@@ -75,22 +75,24 @@ public class Login extends HttpServlet {
 		String usrn = request.getParameter("username");
 		String pwd = request.getParameter("password");
 		Boolean html = Boolean.valueOf(request.getParameter("html"));
-		String path = getServletContext().getContextPath();
+		String path = "/index.html";
 		
 		User user;
 		try {
 			user = usr.checkCredentials(usrn, pwd);
 			// If the credentials were right the user is redirected to the Home
 			if(user.getRole().equals("customer")) {
-				if(html) 	path = path + "/HomeCustomer";
-				else 		path = path + "/HomeCustomerJS";
-			} else if(user.getRole().equals("customer")) {
-				if(html) 	path = path + "/HomeEmployee";
-				else 		path = path + "/HomeEmployeeJS";
+				if(html) 	path = getServletContext().getContextPath() + "/HomeCustomer";
+				else 		path = getServletContext().getContextPath() + "/HomeCustomerJS";
+			} else if(user.getRole().equals("employee")) {
+				if(html) 	path = getServletContext().getContextPath() + "/HomeEmployee";
+				else 		path = getServletContext().getContextPath() + "/HomeEmployeeJS";
 			}
 			/*else {
 				path = path + "/admin";
 			}*/
+			request.getSession().setAttribute("user",user);
+			response.sendRedirect(path);
 		} catch (SQLException e) {
 			// If the credentials weren't right an error message is shown in the 
 			// console and on the page

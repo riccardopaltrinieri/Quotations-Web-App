@@ -20,6 +20,10 @@ version="3.1">
   <param-name>dbDriver</param-name>
   <param-value>com.mysql.cj.jdbc.Driver</param-value>
  </context-param>
+ <context-param>
+  <param-name>cachingAllowed</param-name>
+  <param-value>false</param-value>
+ </context-param>
 
  <filter> 
       <filter-name>LogChecker</filter-name>
@@ -34,11 +38,14 @@ version="3.1">
     <url-pattern>/index.html</url-pattern>
 	<url-pattern>/HomeCustomer</url-pattern>
 	<url-pattern>/HomeEmployee</url-pattern>
+	<url-pattern>/HomeCustomerJS</url-pattern>
+	<url-pattern>/HomeEmployeeJS</url-pattern>
 	<url-pattern>/PriceQuote</url-pattern>
  </filter-mapping>
  <filter-mapping> 
     <filter-name>EmpChecker</filter-name> 
 	<url-pattern>/HomeEmployee</url-pattern>
+	<url-pattern>/HomeEmployeeJS</url-pattern>
 	<url-pattern>/PriceQuote</url-pattern>
  </filter-mapping>
 
