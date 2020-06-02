@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -18,19 +20,18 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import beans.User;
-import dao.UserDAO;
+import beans.Quotation;
+import dao.QuotationDAO;
 
 /**
- * Servlet implementation class LogIn
- * Used to get user info from database if the credentials
- * are right
+ * Servlet implementation class HomeEmplyee
  */
-@WebServlet({"/LogIn", "/Login"})
-public class Login extends HttpServlet {
+@WebServlet("/HomeEmployeeJS")
+public class HomeEmployeeJS extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+    private Connection connection = null;
+    
 	private TemplateEngine templateEngine;
-	private Connection connection = null;
     
 	@Override
 	public void init() throws ServletException {
@@ -44,14 +45,14 @@ public class Login extends HttpServlet {
 			String user = context.getInitParameter("dbUser");
 			String password = context.getInitParameter("dbPassword");
 			Class.forName(driver);
-			connection  = DriverManager.getConnection(url, user, password);
+			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e ) {
-			throw new UnavailableException("Can't load db Driver " + context.getInitParameter("dbDriver"));
+			throw new UnavailableException("Can't load db Driver");
 		} catch (SQLException e ) {
 			throw new UnavailableException("Couldn't connect");
 		}
 		
-		//Thymeleaf initialization
+		// Thymeleaf initialization
 		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(context);
 		templateResolver.setTemplateMode(TemplateMode.HTML);
 		this.templateEngine = new TemplateEngine();
@@ -59,9 +60,22 @@ public class Login extends HttpServlet {
 		templateResolver.setSuffix(".html");
 	}
 
-
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String path = "/index.html";
+		
+		QuotationDAO qtn = new QuotationDAO(connection);
+		List<Quotation> pricelessQuotations;
+		
+		try {
+			pricelessQuotations = qtn.getPricelessQuotations();
+			
+			request.setAttribute("pricelessQuotations", pricelessQuotations);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		request.setAttribute("time", String.valueOf((int) new Date().getTime()));
+		String path = "/WEB-INF/HomeEmployeeJS.html";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		templateEngine.process(path, ctx, response.getWriter());
@@ -70,38 +84,10 @@ public class Login extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		UserDAO usr = new UserDAO(connection);
-		
-		String usrn = request.getParameter("username");
-		String pwd = request.getParameter("password");
-		Boolean html = Boolean.valueOf(request.getParameter("html"));
-		String path = "/Login";
-		
-		User user;
-		try {
-			user = usr.checkCredentials(usrn, pwd);
-			// If the credentials were right the user is redirected to the Home
-			if(user.getRole().equals("customer")) {
-				if(html) 	path = getServletContext().getContextPath() + "/HomeCustomer";
-				else 		path = getServletContext().getContextPath() + "/HomeCustomerJS";
-			} else if(user.getRole().equals("employee")) {
-				if(html) 	path = getServletContext().getContextPath() + "/HomeEmployee";
-				else 		path = getServletContext().getContextPath() + "/HomeEmployeeJS";
-			}
-			/*else {
-				path = path + "/admin";
-			}*/
-			request.getSession().setAttribute("user",user);
-			response.sendRedirect(path);
-		} catch (SQLException e) {
-			// If the credentials weren't right an error message is shown in the 
-			// console and on the page
-			System.out.println(e);
-			request.setAttribute("notvalid", "true");
-			doGet(request,response);
-		}
-		
+
+		doGet(request, response);
 	}
+
 
 	public void destroy() {
 		try {

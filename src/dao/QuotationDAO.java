@@ -161,9 +161,10 @@ public class QuotationDAO {
 		List<Quotation> quotations = new ArrayList<>();
 		OptionDAO opt = new OptionDAO(connection);
 		
-		String query = "SELECT q.id, q.price, p.id, p.name, p.code "
+		String query = "SELECT q.id, u.username, p.id, p.name, p.code "
 					 + "FROM price_quotations_db.quotations as q JOIN price_quotations_db.products as p "
-					 + "ON q.id_product = p.id "
+					 + "JOIN price_quotations_db.users as u "
+					 + "ON q.id_product = p.id AND q.id_customer = u.id "
 					 + "WHERE q.price = ?";
 		
 		try (PreparedStatement pstatement = connection.prepareStatement(query); ) {
@@ -228,10 +229,9 @@ public class QuotationDAO {
 					int idProduct = result.getInt("p.id");
 					int productCode = result.getInt("p.code");
 					String productName = result.getString("p.name");
-					Product product = new Product(idProduct, productCode, productName);
-					product.setOptions(opt.getQuotationOptions(idQuotation, idProduct));
+					
 					StringBuilder options = new StringBuilder();
-					for(Option op : product.getOptions()) {
+					for(Option op : opt.getQuotationOptions(idQuotation, idProduct)) {
 						options.append(op.getName() + " ");
 					}
 					
@@ -267,5 +267,88 @@ public class QuotationDAO {
 			}
 		}
 	}
+
+	public String getQuotationJson(int idQuotation) throws SQLException {
+		
+		OptionDAO opt = new OptionDAO(connection);
+		JsonObject quotationJson = new JsonObject();
+		
+		String query = "SELECT u.username, q.price, p.id, p.name, p.code "
+					 + "FROM price_quotations_db.quotations as q JOIN price_quotations_db.products as p "
+					 + "JOIN price_quotations_db.users as u "
+					 + "ON q.id_product = p.id AND q.id_customer = u.id "
+					 + "WHERE q.id = ?";
+		
+		try (PreparedStatement pstatement = connection.prepareStatement(query); ) {
+				
+			pstatement.setInt(1, idQuotation);
+			pstatement.execute();
+
+			try (ResultSet result = pstatement.executeQuery();) {
+				
+				if(result.next()) {
+					String customer = result.getString("u.username");
+					int idProduct = result.getInt("p.id");
+					int productCode = result.getInt("p.code");
+					String productName = result.getString("p.name");
+					
+					StringBuilder options = new StringBuilder();
+					for(Option op : opt.getQuotationOptions(idQuotation, idProduct)) {
+						options.append(op.getName() + " ");
+					}
+
+					quotationJson.addProperty("product", productName);
+					quotationJson.addProperty("productid", idProduct);
+					quotationJson.addProperty("code", productCode);
+					quotationJson.addProperty("options", options.toString());
+					quotationJson.addProperty("customer", customer);
+				}
+			}
+		}
+		return quotationJson.toString();
+	}
+
 	
+	public String getEmployeeQuotationsJson(User user) throws SQLException {
+
+		JsonArray finalJson = new JsonArray();
+		OptionDAO opt = new OptionDAO(connection);
+		
+		String query = "SELECT q.id, u.username, q.price, p.id, p.name, p.code "
+					 + "FROM price_quotations_db.quotations as q JOIN price_quotations_db.products as p "
+					 + "JOIN price_quotations_db.users as u "
+					 + "ON q.id_product = p.id AND q.id_customer = u.id "
+					 + "WHERE q.id_employee = ?";
+		
+		try (PreparedStatement pstatement = connection.prepareStatement(query); ) {
+				
+				pstatement.setInt(1, user.getId());
+				pstatement.execute();
+	
+				try (ResultSet result = pstatement.executeQuery();) {
+					while(result.next()) {
+						JsonObject quotationJson = new JsonObject();
+						String customer = result.getString("u.username");
+						int idQuotation = result.getInt("q.id");
+						float price = result.getFloat("q.price");
+						int idProduct = result.getInt("p.id");
+						int productCode = result.getInt("p.code");
+						String productName = result.getString("p.name");
+						
+						StringBuilder options = new StringBuilder();
+						for(Option op : opt.getQuotationOptions(idQuotation, idProduct)) {
+							options.append(op.getName() + " ");
+						}
+
+						quotationJson.addProperty("product", productName);
+						quotationJson.addProperty("code", productCode);
+						quotationJson.addProperty("options", options.toString());
+						quotationJson.addProperty("customer", customer);
+						quotationJson.addProperty("price", price);
+						finalJson.add(quotationJson);
+					}
+					return finalJson.toString();
+				}
+		}
+	}
 }

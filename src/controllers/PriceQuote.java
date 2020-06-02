@@ -68,16 +68,28 @@ public class PriceQuote extends HttpServlet {
 			int idQuotation = Integer.valueOf(request.getParameter("quotation"));
 			Quotation quotation = qtn.getQuotation(idQuotation);
 			
-			request.getSession().setAttribute("idQuotation", idQuotation);
-			request.setAttribute("quotation", quotation);
+			if(request.getParameter("javascript") == null) {
+				
+				request.getSession().setAttribute("idQuotation", idQuotation);
+				request.setAttribute("quotation", quotation);
+				String path = "/WEB-INF/PriceQuote.html";
+				ServletContext servletContext = getServletContext();
+				final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+				templateEngine.process(path, ctx, response.getWriter());
+				
+			} else {
+
+				request.getSession().setAttribute("idQuotation", idQuotation);
+				String json = qtn.getQuotationJson(idQuotation);
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+				response.getWriter().write(json);
+				
+			}
 		} catch (SQLException | NumberFormatException e) {
 			e.printStackTrace();
 		}
 		
-		String path = "/WEB-INF/PriceQuote.html";
-		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		templateEngine.process(path, ctx, response.getWriter());
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -100,7 +112,8 @@ public class PriceQuote extends HttpServlet {
 		} catch (SQLException | NumberFormatException e) {
 			e.printStackTrace();
 		}
-		response.sendRedirect(request.getContextPath() + "/HomeEmployee");
+		
+		if(request.getParameter("javascript") == null) response.sendRedirect(request.getContextPath() + "/HomeEmployee");
 	}
 
 

@@ -62,18 +62,29 @@ public class GetQuotations extends HttpServlet {
 		
 		User user = (User) request.getSession().getAttribute("user");
 		QuotationDAO qtn = new QuotationDAO(connection);
+		String json;
 		
 		try {
-			if(request.getParameter("pending") != null){
-				String pendingRequests = qtn.getPendingRequests(user);
-				response.setContentType("text/plain");
-				response.setCharacterEncoding("UTF-8");
-				response.getWriter().write(pendingRequests);
+			if(user.getRole().equals("customer")) {
+				if(request.getParameter("pending") != null){
+					json = qtn.getPendingRequests(user);
+					response.setContentType("text/plain");
+					response.setCharacterEncoding("UTF-8");
+					response.getWriter().write(json);
+				} else {
+					json = qtn.getCustomerQuotationsJson(user);
+					response.setContentType("application/json");
+					response.setCharacterEncoding("UTF-8");
+					response.getWriter().write(json);
+				}
+				
 			} else {
-				String json = qtn.getCustomerQuotationsJson(user);
-				response.setContentType("application/json");
-				response.setCharacterEncoding("UTF-8");
-				response.getWriter().write(json);
+				
+					json = qtn.getEmployeeQuotationsJson(user);
+					response.setContentType("application/json");
+					response.setCharacterEncoding("UTF-8");
+					response.getWriter().write(json);
+
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

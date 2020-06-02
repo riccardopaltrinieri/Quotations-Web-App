@@ -98,27 +98,6 @@ function numQuot(request) {
 	}
 }
 
-/*function sendForm() {
-	var formData = new FormData();
-	var product = document.getElementById("productChoice");
-	var optionsChecked = document.querySelectorAll("input[type=checkbox]:checked");
-	
-	formData.append(product.name, product.value);
-	for(var i = 0; i < optionsChecked.length; i++) {
-		formData.append(optionsChecked[i].name, optionsChecked[i].value);
-	}
-	
-	request = new XMLHttpRequest();
-	request.open("POST", "HomeCustomerJS", true);
-	request.setRequestHeader("Content-Type", "multipart/form-data");
-	request.onreadystatechange = function() {
-		if(request.readyState == 4 && request.status == 200) {
-			console.log("form submitted successfully! \n");
-		}
-		return false;
-	}
-	request.send(formData);
-}*/
 function submitCatch() {
 	$("form").submit(function(e) {
 	    e.preventDefault();
@@ -127,11 +106,7 @@ function submitCatch() {
 	        url: 'HomeCustomerJS',
 	        data: $('#form').serialize(),
 	        success: function() {
-	            console.log("The form post was successful");
 	        	asynchReq("GetQuotations?pending=true", numQuot);
-	        	},
-	        error: function() {
-	            console.log("The form post was unsuccessful");
 	        	}
 	    	});
 	    });
