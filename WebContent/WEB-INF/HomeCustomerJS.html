@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
   <link href="../css/mystyle.css" th:href="@{/css/mystyle.css}" rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="../js/HomeCustomer.js" th:src="@{/js/HomeCustomer.js?v=3453}"></script>
+  <script src="../js/HomeCustomer.js" th:src="@{/js/HomeCustomer.js(t=${time})}"></script>
   <title>Quotations: Customer</title>
 </head>
 <body>
@@ -42,6 +42,31 @@
 				</div>
 			</div>
 
+			<div class="col-6">
+				<h3> Ask for a new price quotation: </h3>
+				
+				<form id="form" class="form-group m-3">
+				
+				    <h5>Product: </h5>
+				    
+				    <select id="productChoice" onchange="changeOptions()" name="product" class="form-control">
+						<option th:each="p : ${products}" th:value="${p.id}" th:text="${p.productCode + ' | ' + p.name}"> No product available </option>
+					</select>
+					
+					<br> <br>
+					
+					<img id="productImage" th:src="@{/GetImage(image=${products[0].id})}" class="rounded img-thumbnail mx-2" alt="product+image">
+					
+					<div id="checkBoxContainer" th:each="o : ${options}">
+						<input type="checkbox" th:name="${o.optionCode}" th:value="${o.id}"> 
+						<span th:text="${o.name}"> No options to show: </span><br>
+					</div>
+					<input type="submit" id="buttonForm" class="btn btn-info mt-3" value="Ask">
+				</form>
+				
+				<h4 id="pending"></h4>
+			</div>
+			
 		</div>
 	</div>
 

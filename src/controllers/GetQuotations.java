@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -19,9 +17,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
-import beans.Option;
 import beans.User;
-import dao.OptionDAO;
 import dao.QuotationDAO;
 
 /**
@@ -68,10 +64,17 @@ public class GetQuotations extends HttpServlet {
 		QuotationDAO qtn = new QuotationDAO(connection);
 		
 		try {
-			String json = qtn.getCustomerQuotationsJson(user);
-			response.setContentType("application/json");
-			response.setCharacterEncoding("UTF-8");
-			response.getWriter().write(json);
+			if(request.getParameter("pending") != null){
+				String pendingRequests = qtn.getPendingRequests(user);
+				response.setContentType("text/plain");
+				response.setCharacterEncoding("UTF-8");
+				response.getWriter().write(pendingRequests);
+			} else {
+				String json = qtn.getCustomerQuotationsJson(user);
+				response.setContentType("application/json");
+				response.setCharacterEncoding("UTF-8");
+				response.getWriter().write(json);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -80,47 +83,7 @@ public class GetQuotations extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		QuotationDAO qtn = new QuotationDAO(connection);
-		OptionDAO opt = new OptionDAO(connection);
-		User user = (User) request.getSession().getAttribute("user");
-		String product = request.getParameter("product");
-		List<Option> options;
-		int idProduct;
-		
-		if (product != null) {
-			
-			idProduct = Integer.valueOf(product);
-			request.getSession().setAttribute("product", idProduct);
-			try {
-				options = opt.getOptions(idProduct);
-				request.setAttribute("options", options);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			doGet(request, response);
-			
-		} else {
-			
-			idProduct = (int) request.getSession().getAttribute("product");
-			
-			try {
-				options = opt.getOptions(idProduct);
-				List<Option> optionsChecked = new ArrayList<>();
-				
-				for (Option o : options) {
-					String optionParameter = request.getParameter(String.valueOf(o.getOptionCode()));
-					if(optionParameter != null) optionsChecked.add(o);
-				}
-				
-				qtn.addQuotation(user, idProduct, optionsChecked);
-				request.getSession().setAttribute("product", null);
-				
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			
-			response.sendRedirect(request.getContextPath() + "/HomeCustomer");
-		}
+		doGet(request,response);
 	}
 
 

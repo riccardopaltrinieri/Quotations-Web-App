@@ -246,5 +246,26 @@ public class QuotationDAO {
 			return finalJson.toString();
 		}
 	}
+
+	public String getPendingRequests(User user) throws SQLException {
+		
+		String query = "SELECT count(*) "
+					 + "FROM price_quotations_db.quotations as q "
+					 + "WHERE q.id_customer = ? AND q.price = 0";
+	
+		try (PreparedStatement pstatement = connection.prepareStatement(query); ) {
+				
+			pstatement.setInt(1, user.getId());
+			pstatement.execute();
+	
+			try (ResultSet result = pstatement.executeQuery();) {
+				if(result.next()) {
+					return String.valueOf(result.getInt("count(*)"));
+				} else {
+					throw new SQLException("Error in finding pending requests");
+				}
+			}
+		}
+	}
 	
 }

@@ -13,7 +13,7 @@ import java.io.File;
  */
 public class ImageDAO {
 
-	private static final String dbLocation = "C:\\Users\\ricky\\Documents\\GitHub\\TIW_Web_Page_Gestione_Preventivi\\WebContent\\WEB-INF\\images";
+	private static final String dbLocation = "C:\\Users\\ricky\\Documents\\GitHub\\Price-quotation-Web-Page\\WebContent\\WEB-INF\\images";
 	private static final String productDir = "\\products";
 	
 
