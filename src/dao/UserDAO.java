@@ -65,7 +65,7 @@ public class UserDAO {
 					result.next();
 					int id = result.getInt("id");
 					String role = result.getString("role");
-					User user = new User(id, username, role);
+					User user = new User(id, role, username);
 					return user;
 				}
 			}
