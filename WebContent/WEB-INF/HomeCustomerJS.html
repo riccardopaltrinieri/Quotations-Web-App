@@ -57,9 +57,11 @@
 					
 					<img id="productImage" th:src="@{/GetImage(image=${products[0].id})}" class="rounded img-thumbnail mx-2" alt="product+image">
 					
-					<div id="checkBoxContainer" th:each="o : ${options}">
-						<input type="checkbox" th:name="${o.optionCode}" th:value="${o.id}"> 
-						<span th:text="${o.name}"> No options to show: </span><br>
+					<div id="checkBoxContainer">
+						<span th:each="o : ${options}">
+							<input type="checkbox" th:name="${o.optionCode}" th:value="${o.id}"> 
+							<label th:text="${o.name}"> No options to show: </label><br>
+						</span>
 					</div>
 					<input type="submit" id="buttonForm" class="btn btn-info mt-3" value="Ask">
 				</form>

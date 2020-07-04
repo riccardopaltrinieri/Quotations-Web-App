@@ -2,6 +2,7 @@ $(document).ready(function() {
 	  asynchReq("GetQuotations", loadQuotations);
 	  submitCatch();
 	  linkButtonsModal();
+	  checkPrice();
 	})
 	
 var quotationId;
@@ -28,7 +29,7 @@ function submitCatch() {
 	            $('#modal').hide();
 	        	},
 	        error: function() {
-	            console.log("The form post was unsuccessful");
+	            alert("The price action was unsuccessful");
 	        	}
 	    	});
 	    });
@@ -110,8 +111,8 @@ function removeRow() {
 
 function checkPrice() {
 	var priceInput = document.getElementById("quotPrice");
-	priceInput.onkeyup = function() {
-		if(priceInput <= 0) {
+	priceInput.oninput = function() {
+		if(priceInput.value <= 0) {
 			priceInput.setCustomValidity("Price must be > 0");
 			priceInput.style.borderColor = "red";
 			priceInput.reportValidity();

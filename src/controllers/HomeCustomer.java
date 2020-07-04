@@ -74,11 +74,14 @@ public class HomeCustomer extends HttpServlet {
 		
 		List<Quotation> quotations;
 		List<Product> products;
+		String pending;
 		
 		try {
 			products = prd.getProducts();
 			quotations = qtn.getCustomerQuotations(user);
+			pending = qtn.getPendingRequests(user);
 			
+			request.setAttribute("pending", pending);
 			request.setAttribute("products", products);
 			request.setAttribute("quotations", quotations);
 		} catch (SQLException e) {

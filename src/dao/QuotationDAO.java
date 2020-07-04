@@ -174,14 +174,17 @@ public class QuotationDAO {
 	
 				try (ResultSet result = pstatement.executeQuery();) {
 					while(result.next()) {
+						String customer = result.getString("u.username");
 						int idQuotation = result.getInt("q.id");
 						int idProduct = result.getInt("p.id");
 						int productCode = result.getInt("p.code");
 						String productName = result.getString("p.name");
 						Product product = new Product(idProduct, productCode, productName);
 						product.setOptions(opt.getQuotationOptions(idQuotation, idProduct));
+						Quotation qtn = new Quotation(idQuotation, product, 0);
+						qtn.setCustomer(customer);
 						
-						quotations.add(new Quotation(idQuotation, product, 0));
+						quotations.add(qtn);
 					}
 					return quotations;
 				}

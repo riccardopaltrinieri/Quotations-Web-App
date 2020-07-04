@@ -107,7 +107,10 @@ function submitCatch() {
 	        data: $('#form').serialize(),
 	        success: function() {
 	        	asynchReq("GetQuotations?pending=true", numQuot);
-	        	}
+	        	},
+        	error: function() {
+        		alert("Something went wrong on our server");
+        		}
 	    	});
 	    });
 }

@@ -70,6 +70,7 @@
 					    <select name="product" class="form-control">
 							<option th:each="p : ${products}" th:value="${p.id}" th:text="${p.productCode + ' | ' + p.name}"> No product available </option>
 						</select>
+						<h3> Pending Requests: <span th:text="${pending}"> -1 </span></h3>
 					</div>
 					<div th:unless="${session.product} == null">
 						<h5> You chose </h5>

@@ -108,6 +108,7 @@ public class PriceQuote extends HttpServlet {
 				ServletContext servletContext = getServletContext();
 				final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 				templateEngine.process(path, ctx, response.getWriter());
+				return;
 			}
 		} catch (SQLException | NumberFormatException e) {
 			e.printStackTrace();

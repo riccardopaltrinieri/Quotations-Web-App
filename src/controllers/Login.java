@@ -80,7 +80,6 @@ public class Login extends HttpServlet {
 		User user;
 		try {
 			user = usr.checkCredentials(usrn, pwd);
-			System.out.println(user.getName() + user.getRole());
 			// If the credentials were right the user is redirected to the Home
 			if(user.getRole().equals("customer")) {
 				if(html) 	path = getServletContext().getContextPath() + "/HomeCustomer";
